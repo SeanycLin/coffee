@@ -1,0 +1,1075 @@
+<!DOCTYPE html><html lang="zh-TW"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>咖啡點餐系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: {
+                            light: '#C8A27C',
+                            DEFAULT: '#8B5A2B',
+                            dark: '#5E3A1C',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-amber-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 min-h-screen">
+    <!-- 頁面導航 -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <h1 class="text-xl md:text-2xl font-bold text-coffee-dark dark:text-coffee-light cursor-pointer" onclick="navigateTo('home')">咖啡愛好者</h1>
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="navigateTo('varieties')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-amber-100 dark:hover:bg-gray-700 transition-colors">咖啡品種</button>
+                <button onclick="navigateTo('menu')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-amber-100 dark:hover:bg-gray-700 transition-colors">咖啡菜單</button>
+                <button onclick="navigateTo('cart')" id="cart-button" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-coffee hover:bg-coffee-dark transition-colors relative">
+                    購物車
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                </button>
+                <button onclick="navigateTo('admin-login')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-amber-100 dark:hover:bg-gray-700 transition-colors">
+                    管理者
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 首頁 -->
+        <section id="home-page" class="page">
+            <div class="flex flex-col items-center justify-center">
+                <div class="w-full h-64 md:h-96 mb-8 overflow-hidden rounded-lg shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&amp;auto=format&amp;fit=crop&amp;q=60&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y29mZmVlJTIwc2hvcHxlbnwwfHwwfHx8MA%3D%3D" alt="咖啡店環境" class="w-full h-full object-cover">
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-coffee-dark dark:text-coffee-light mb-6 text-center">發現您的完美咖啡體驗</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-center mb-8 max-w-2xl">
+                    歡迎來到咖啡愛好者，這裡有最優質的咖啡豆和精心製作的特色飲品。我們的咖啡師致力於為您帶來豐富多彩的咖啡風味，讓每一杯都是一次味蕾的探索之旅。
+                </p>
+                <div class="grid md:grid-cols-2 gap-6 w-full max-w-2xl">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+                        <img src="https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?q=80&amp;w=1470&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="咖啡品種" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-coffee-dark dark:text-coffee-light mb-2">探索咖啡品種</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">了解不同咖啡豆的獨特風味和特性，從阿拉比卡到羅布斯塔，每種都有其特色。</p>
+                            <button onclick="navigateTo('varieties')" class="w-full bg-amber-100 hover:bg-amber-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-coffee-dark dark:text-coffee-light font-bold py-2 px-4 rounded-md transition-colors">
+                                了解更多
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&amp;w=1447&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="咖啡菜單" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-coffee-dark dark:text-coffee-light mb-2">瀏覽咖啡菜單</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">選擇您喜愛的咖啡飲品，從經典的義式濃縮到創意的特調飲品，應有盡有。</p>
+                            <button onclick="navigateTo('menu')" class="w-full bg-coffee hover:bg-coffee-dark text-white font-bold py-2 px-4 rounded-md transition-colors">
+                                立即點餐
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 咖啡品種介紹頁 -->
+        <section id="varieties-page" class="page hidden">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-4 text-coffee dark:text-coffee-light">咖啡品種介紹</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">
+                    咖啡豆的品種決定了咖啡的風味特性。不同的生長環境、海拔高度和處理方式都會影響咖啡的最終風味。了解這些差異，能讓您更好地選擇符合自己口味的咖啡。
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <img src="https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?q=80&amp;w=1470&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="阿拉比卡咖啡豆" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-semibold mb-2 text-coffee dark:text-coffee-light">阿拉比卡 (Arabica)</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3">最常見的高品質咖啡品種，風味豐富多變，酸度適中，常帶有花香、水果和莓果的風味。生長於海拔較高的地區，佔全球咖啡產量約60-70%。</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">酸度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">香氣</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">濃度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <img src="https://images.unsplash.com/photo-1580933073521-dc49ac0d4e6a?q=80&amp;w=1469&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="羅布斯塔咖啡豆" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-semibold mb-2 text-coffee dark:text-coffee-light">羅布斯塔 (Robusta)</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3">強健耐病的品種，咖啡因含量高，風味較強烈，帶有木質、堅果和巧克力的香氣。多用於即溶咖啡和義式濃縮咖啡調配，增加咖啡的體感和風味層次。</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">酸度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">香氣</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">濃度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <img src="https://images.unsplash.com/photo-1559525086-91e7604e1fac?q=80&amp;w=1470&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="利伯瑞卡咖啡豆" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-semibold mb-2 text-coffee dark:text-coffee-light">利伯瑞卡 (Liberica)</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3">較少見的品種，豆型大而不規則，風味獨特，帶有花香和水果香氣，同時有煙燻和木質的風味。主要產於菲律賓和馬來西亞等東南亞國家。</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">酸度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 55%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">香氣</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">濃度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <img src="https://images.unsplash.com/photo-1497636577773-f1231844b336?q=80&amp;w=1374&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="埃塞俄比亞耶加雪菲" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-semibold mb-2 text-coffee dark:text-coffee-light">埃塞俄比亞耶加雪菲</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3">享有「咖啡皇后」之稱的頂級阿拉比卡品種，具有清晰的柑橘酸度和花香，風味層次豐富，帶有柑橘、花朵、蜂蜜和茶般的香氣。</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">酸度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">香氣</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">濃度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <img src="https://images.unsplash.com/photo-1565600929308-1c1f1ce278e3?q=80&amp;w=1374&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="哥倫比亞咖啡豆" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-semibold mb-2 text-coffee dark:text-coffee-light">哥倫比亞咖啡</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3">平衡的風味特性，中等酸度，具有堅果和焦糖的風味，香氣豐富且口感順滑。哥倫比亞得天獨厚的地理條件使其咖啡具有獨特的品質。</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">酸度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">香氣</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">濃度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <img src="https://images.unsplash.com/photo-1578314675043-a1f458d69837?q=80&amp;w=1470&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="藍山咖啡豆" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-semibold mb-2 text-coffee dark:text-coffee-light">牙買加藍山</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3">被稱為「咖啡中的香檳」，低酸度、平衡的風味，具有濃郁的香氣和絲滑的口感，帶有細膩的堅果風味和巧克力後韻。</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">酸度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">香氣</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">濃度</span>
+                            <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div class="bg-coffee h-2.5 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center mb-8">
+                <button onclick="navigateTo('menu')" class="bg-coffee hover:bg-coffee-dark text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                    前往咖啡菜單
+                </button>
+            </div>
+        </section>
+
+        <!-- 咖啡菜單頁 -->
+        <section id="menu-page" class="page hidden">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-4 text-coffee dark:text-coffee-light">咖啡菜單</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">
+                    選擇您喜愛的咖啡飲品，每一種都由我們經驗豐富的咖啡師精心調製，為您帶來極致的咖啡體驗。
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" id="coffee-menu">
+                <!-- 咖啡菜單項目將由 JavaScript 動態生成 -->
+            </div>
+        </section>
+
+        <!-- 購物車頁面 -->
+        <section id="cart-page" class="page hidden">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-4 text-coffee dark:text-coffee-light">您的購物車</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">
+                    查看您已選擇的咖啡飲品，調整數量或移除商品，準備好後即可進行結帳。
+                </p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8">
+                <div id="cart-items" class="mb-4">
+                    <p id="empty-cart-message" class="text-gray-500 dark:text-gray-400 text-center py-8">您的購物車是空的</p>
+                    <!-- 購物車項目將由 JavaScript 動態生成 -->
+                </div>
+                <div class="flex justify-between items-center font-bold text-lg mt-4 pt-4 border-t">
+                    <span>總計金額:</span>
+                    <span id="total-price" class="text-coffee-dark dark:text-coffee-light">NT$ 0</span>
+                </div>
+                <div class="flex mt-6 space-x-4">
+                    <button onclick="navigateTo('menu')" class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-lg transition-colors">
+                        繼續購物
+                    </button>
+                    <button id="checkout-btn" class="flex-1 bg-coffee hover:bg-coffee-dark text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed" disabled="">
+                        前往結帳
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 訂單頁面 -->
+        <section id="order-page" class="page hidden">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-4 text-coffee dark:text-coffee-light">訂單確認</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">
+                    請確認您的訂單內容，填寫取餐資訊後即可完成訂購。
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-coffee dark:text-coffee-light border-b pb-2">訂單明細</h3>
+                    <div id="order-summary" class="mb-6 text-gray-700 dark:text-gray-300">
+                        <!-- 訂單摘要將由 JavaScript 動態生成 -->
+                    </div>
+                    <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
+                        <span>總計金額:</span>
+                        <span id="order-total-price" class="text-coffee-dark dark:text-coffee-light">NT$ 0</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-coffee dark:text-coffee-light border-b pb-2">取餐資訊</h3>
+                    <form id="checkout-form" class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-gray-700 dark:text-gray-300 mb-2">姓名</label>
+                            <input type="text" id="name" name="name" required="" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-coffee dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-gray-700 dark:text-gray-300 mb-2">手機號碼</label>
+                            <input type="tel" id="phone" name="phone" required="" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-coffee dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base">
+                        </div>
+                        <div>
+                            <label for="pickup-time" class="block text-gray-700 dark:text-gray-300 mb-2">取餐時間</label>
+                            <select id="pickup-time" name="pickup-time" required="" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-coffee dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base">
+                                <option value="">請選擇取餐時間</option>
+                                <!-- 時間選項會由JavaScript動態生成 -->
+                            </select>
+                        </div>
+                        <div>
+                            <label for="note" class="block text-gray-700 dark:text-gray-300 mb-2">備註</label>
+                            <textarea id="note" name="note" rows="3" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-coffee dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="flex justify-center mt-8 space-x-4">
+                <button onclick="navigateTo('cart')" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-3 px-6 rounded-lg transition-colors">
+                    返回購物車
+                </button>
+                <button id="confirm-order-btn" class="bg-coffee hover:bg-coffee-dark text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                    確認訂購
+                </button>
+            </div>
+        </section>
+
+        <!-- 訂單成功頁面 -->
+        <section id="success-page" class="page hidden">
+            <div class="flex flex-col items-center justify-center py-12">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl max-w-md w-full text-center">
+                    <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-coffee-dark dark:text-coffee-light mb-4">訂單已確認！</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-6">感謝您的訂購，您的咖啡正在準備中。</p>
+                    <div id="success-order-summary" class="mb-6 text-left text-gray-700 dark:text-gray-300">
+                        <!-- 訂單摘要將由 JavaScript 動態生成 -->
+                    </div>
+                    <button onclick="navigateTo('home')" class="w-full bg-coffee hover:bg-coffee-dark text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                        返回首頁
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 管理者登入頁面 -->
+        <section id="admin-login-page" class="page hidden">
+            <div class="flex flex-col items-center justify-center py-12">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl max-w-md w-full">
+                    <h2 class="text-2xl font-bold text-coffee-dark dark:text-coffee-light mb-6 text-center">管理者登入</h2>
+                    <form id="admin-login-form" class="space-y-6">
+                        <div>
+                            <label for="admin-password" class="block text-gray-700 dark:text-gray-300 mb-2">請輸入管理者密碼</label>
+                            <input type="password" id="admin-password" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-coffee dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" placeholder="請輸入密碼...">
+                        </div>
+                        <div id="password-error" class="text-red-500 hidden">密碼錯誤，請重新輸入</div>
+                        <div class="flex space-x-4">
+                            <button type="button" onclick="navigateTo('home')" class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded-lg transition-colors">
+                                返回首頁
+                            </button>
+                            <button type="button" onclick="checkAdminPassword()" class="flex-1 bg-coffee hover:bg-coffee-dark text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                                登入
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 管理者訂單查看頁面 -->
+        <section id="admin-orders-page" class="page hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2 text-coffee dark:text-coffee-light">訂單管理</h2>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        查看所有訂單並可以進行訂單管理
+                    </p>
+                </div>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    登出
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                <div class="p-4 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">所有訂單</h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-900">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">訂單編號</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">顧客姓名</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">聯絡電話</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">訂單內容</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">取餐時間</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">總金額</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">訂單狀態</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700" id="orders-table-body">
+                            <!-- 訂單數據將由 JavaScript 動態生成 -->
+                            <tr id="no-orders-row">
+                                <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    目前沒有訂單數據
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 頁腳 -->
+        <footer class="text-center text-gray-600 dark:text-gray-400 text-sm mt-12">
+            <p>© 2023 咖啡愛好者 - 提供最佳的咖啡體驗</p>
+        </footer>
+    </div>
+
+    <script>
+        // 檢測深色/淺色模式
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // 訂單資料儲存
+        let allOrders = [];
+
+        // 初始化：從 localStorage 讀取訂單數據
+        function initializeOrders() {
+            try {
+                const savedOrders = localStorage.getItem('coffeeShopOrders');
+                if (savedOrders) {
+                    // 解析儲存的訂單數據並還原日期對象
+                    const parsedOrders = JSON.parse(savedOrders, (key, value) => {
+                        if (key === 'date' && value) {
+                            return new Date(value);
+                        }
+                        return value;
+                    });
+                    
+                    if (Array.isArray(parsedOrders)) {
+                        allOrders = parsedOrders;
+                        console.log(`已從 localStorage 載入 ${allOrders.length} 筆訂單`);
+                    }
+                }
+            } catch (error) {
+                console.error('載入訂單數據時發生錯誤:', error);
+                // 如果載入失敗，重置訂單數據
+                allOrders = [];
+                // 清除可能損壞的資料
+                localStorage.removeItem('coffeeShopOrders');
+            }
+        }
+
+        // 保存訂單到 localStorage
+        function saveOrdersToStorage() {
+            try {
+                localStorage.setItem('coffeeShopOrders', JSON.stringify(allOrders));
+                console.log('訂單數據已成功保存到 localStorage');
+            } catch (error) {
+                console.error('保存訂單數據時發生錯誤:', error);
+                // 如果儲存空間不足，可以考慮只保留最近的訂單
+                if (error.name === 'QuotaExceededError') {
+                    // 保留最近50筆訂單
+                    allOrders = allOrders.slice(-50);
+                    try {
+                        localStorage.setItem('coffeeShopOrders', JSON.stringify(allOrders));
+                        console.log('已精簡並保存最近的訂單數據');
+                    } catch (e) {
+                        console.error('即使精簡後仍無法保存訂單數據:', e);
+                    }
+                }
+            }
+        }
+
+        // 咖啡產品數據
+        const coffeeProducts = [
+            {
+                id: 1,
+                name: '義式濃縮咖啡 (Espresso)',
+                description: '濃縮咖啡是所有咖啡飲品的基礎，濃烈的風味，帶有焦糖香氣和豐富的油脂，呈現金棕色的油脂層。',
+                price: 80,
+                image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZXNwcmVzc298ZW58MHx8MHx8fDA%3D' 
+            },
+            {
+                id: 2,
+                name: '美式咖啡 (Americano)',
+                description: '由濃縮咖啡加上熱水調製而成，保留了濃縮咖啡的風味，但口感較為柔和，適合慢慢品味。',
+                price: 100,
+                image: 'https://images.unsplash.com/photo-1518057111178-44a106bad636?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YW1lcmljYW5vfGVufDB8fDB8fHww' 
+            },
+            {
+                id: 3,
+                name: '拿鐵咖啡 (Latte)',
+                description: '濃縮咖啡與蒸煮牛奶的完美結合，口感順滑綿密，奶香與咖啡的完美平衡，頂部通常有一層細膩的奶泡。',
+                price: 120,
+                image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGxhdHRlfGVufDB8fDB8fHww' 
+            },
+            {
+                id: 4,
+                name: '卡布奇諾 (Cappuccino)',
+                description: '由等量的濃縮咖啡、蒸煮牛奶和奶泡組成，口感豐富層次分明，是義大利傳統的經典咖啡。',
+                price: 120,
+                image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FwcHVjY2lub3xlbnwwfHwwfHx8MA%3D%3D' 
+            },
+            {
+                id: 5,
+                name: '摩卡咖啡 (Mocha)',
+                description: '結合了濃縮咖啡、蒸煮牛奶和巧克力醬，風味甜美，巧克力的香甜與咖啡的苦味相得益彰。',
+                price: 140,
+                image: 'https://images.unsplash.com/photo-1512568400610-62da28bc8a13?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bW9jaGF8ZW58MHx8MHx8fDA%3D' 
+            },
+            {
+                id: 6,
+                name: '焦糖瑪奇朵 (Caramel Macchiato)',
+                description: '由香草糖漿、蒸煮牛奶、濃縮咖啡和焦糖醬調製而成，層次豐富，甜美中帶有咖啡的香醇。',
+                price: 150,
+                image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y2FyYW1lbCUyMG1hY2NoaWF0b3xlbnwwfHwwfHx8MA%3D%3D' 
+            }
+        ];
+
+        // 頁面導航
+        function navigateTo(page) {
+            // 隱藏所有頁面
+            document.querySelectorAll('.page').forEach(pageElement => {
+                pageElement.classList.add('hidden');
+            });
+
+            // 顯示目標頁面
+            const targetPage = document.getElementById(`${page}-page`);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+
+            // 特殊處理
+            if (page === 'menu') {
+                renderMenu();
+            } else if (page === 'cart') {
+                updateCartDisplay();
+            } else if (page === 'order') {
+                generatePickupTimes();
+                renderOrderSummary();
+            } else if (page === 'admin-login') {
+                document.getElementById('admin-password').value = '';
+                document.getElementById('password-error').classList.add('hidden');
+            } else if (page === 'admin-orders') {
+                renderAdminOrders();
+            }
+
+            // 滾動到頁面頂部
+            window.scrollTo(0, 0);
+        }
+
+        // 購物車相關變數
+        let cart = [];
+        const cartItemsEl = document.getElementById('cart-items');
+        const emptyCartMessageEl = document.getElementById('empty-cart-message');
+        const totalPriceEl = document.getElementById('total-price');
+        const orderTotalPriceEl = document.getElementById('order-total-price');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const cartCountEl = document.getElementById('cart-count');
+        const confirmOrderBtn = document.getElementById('confirm-order-btn');
+
+        // 更新購物車顯示
+        function updateCartDisplay() {
+            // 更新購物車按鈕上的商品數量
+            if (cart.length > 0) {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCountEl.textContent = totalItems;
+                cartCountEl.classList.remove('hidden');
+            } else {
+                cartCountEl.classList.add('hidden');
+            }
+
+            // 更新購物車頁面內容
+            if (cart.length === 0) {
+                emptyCartMessageEl.style.display = 'block';
+                checkoutBtn.disabled = true;
+                cartItemsEl.innerHTML = '';
+                totalPriceEl.textContent = 'NT$ 0';
+                return;
+            }
+
+            emptyCartMessageEl.style.display = 'none';
+            checkoutBtn.disabled = false;
+            
+            let cartHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                cartHTML += `
+                    <div class="flex justify-between items-center py-4 border-b" data-id="${item.id}">
+                        <div class="flex items-center">
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-md mr-4">
+                            <div>
+                                <p class="font-medium text-gray-800 dark:text-gray-200">${item.name}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">NT$ ${item.price}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="decrease-btn bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full">-</button>
+                            <span class="mx-3 w-8 text-center">${item.quantity}</span>
+                            <button class="increase-btn bg-coffee text-white w-8 h-8 rounded-full">+</button>
+                            <button class="remove-btn ml-4 text-red-500 hover:text-red-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItemsEl.innerHTML = cartHTML;
+            totalPriceEl.textContent = `NT$ ${total}`;
+
+            // 為新添加的按鈕添加事件監聽器
+            document.querySelectorAll('.decrease-btn').forEach(btn => {
+                btn.addEventListener('click', decreaseQuantity);
+            });
+            
+            document.querySelectorAll('.increase-btn').forEach(btn => {
+                btn.addEventListener('click', increaseQuantity);
+            });
+            
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', removeFromCart);
+            });
+        }
+
+        // 增加商品數量
+        function increaseQuantity(e) {
+            const itemEl = e.target.closest('[data-id]');
+            const id = parseInt(itemEl.dataset.id);
+            const cartItem = cart.find(item => item.id === id);
+            cartItem.quantity += 1;
+            updateCartDisplay();
+        }
+
+        // 減少商品數量
+        function decreaseQuantity(e) {
+            const itemEl = e.target.closest('[data-id]');
+            const id = parseInt(itemEl.dataset.id);
+            const cartItem = cart.find(item => item.id === id);
+            
+            if (cartItem.quantity > 1) {
+                cartItem.quantity -= 1;
+            } else {
+                cart = cart.filter(item => item.id !== id);
+            }
+            
+            updateCartDisplay();
+        }
+
+        // 從購物車移除商品
+        function removeFromCart(e) {
+            const itemEl = e.target.closest('[data-id]');
+            const id = parseInt(itemEl.dataset.id);
+            cart = cart.filter(item => item.id !== id);
+            updateCartDisplay();
+        }
+
+        // 添加商品到購物車
+        function addToCart(id) {
+            const product = coffeeProducts.find(p => p.id === id);
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    image: product.image
+                });
+            }
+            
+            updateCartDisplay();
+            
+            // 顯示添加成功提示
+            const product_name = product.name.split(' ')[0];
+            showToast(`${product_name}已加入購物車`);
+        }
+
+        // 生成菜單
+        function renderMenu() {
+            const menuContainer = document.getElementById('coffee-menu');
+            menuContainer.innerHTML = '';
+            
+            coffeeProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-transform hover:-translate-y-1';
+                
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-coffee-dark dark:text-coffee-light mb-2">${product.name}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-coffee-dark dark:text-coffee-light">NT$ ${product.price}</span>
+                            <button class="add-to-cart-btn bg-coffee hover:bg-coffee-dark text-white font-medium py-1 px-3 rounded transition-colors" data-id="${product.id}">
+                                加入購物車
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                menuContainer.appendChild(productCard);
+            });
+            
+            // 為加入購物車按鈕添加事件監聽器
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    addToCart(id);
+                });
+            });
+        }
+
+        // 訂單頁面 - 生成取餐時間選項
+        function generatePickupTimes() {
+            const pickupSelect = document.getElementById('pickup-time');
+            pickupSelect.innerHTML = '<option value="">請選擇取餐時間</option>';
+            
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            let currentTime = hours * 60 + minutes;
+            
+            // 營業時間假設為早上7點到晚上9點
+            const openingTime = 7 * 60; // 7:00 AM
+            const closingTime = 21 * 60; // 9:00 PM
+            
+            // 如果當前時間小於營業時間，從營業開始時間開始算
+            if (currentTime < openingTime) {
+                currentTime = openingTime;
+            }
+            
+            // 從現在開始，每15分鐘一個時段，直到打烊
+            const preparationTime = 20; // 假設製作咖啡需要20分鐘
+            let nextAvailableTime = Math.ceil((currentTime + preparationTime) / 15) * 15;
+            
+            while (nextAvailableTime <= closingTime) {
+                const hour = Math.floor(nextAvailableTime / 60);
+                const minute = nextAvailableTime % 60;
+                
+                const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                const optionElement = document.createElement('option');
+                optionElement.value = timeString;
+                optionElement.textContent = timeString;
+                
+                pickupSelect.appendChild(optionElement);
+                
+                nextAvailableTime += 15;
+            }
+            
+            // 如果已經過了營業時間或接近關店時間
+            if (pickupSelect.options.length <= 1) {
+                const tomorrowOption = document.createElement('option');
+                tomorrowOption.value = '明天07:00';
+                tomorrowOption.textContent = '明天 07:00 (隔日取餐)';
+                pickupSelect.appendChild(tomorrowOption);
+            }
+        }
+
+        // 渲染訂單摘要
+        function renderOrderSummary() {
+            const orderSummaryEl = document.getElementById('order-summary');
+            let summaryHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                summaryHTML += `
+                    <div class="flex justify-between mb-2">
+                        <div>
+                            <span class="font-medium">${item.name}</span>
+                            <span class="text-gray-500 dark:text-gray-400 ml-2">x ${item.quantity}</span>
+                        </div>
+                        <span>NT$ ${itemTotal}</span>
+                    </div>
+                `;
+            });
+            
+            orderSummaryEl.innerHTML = summaryHTML;
+            orderTotalPriceEl.textContent = `NT$ ${total}`;
+        }
+
+        // 顯示提示訊息
+        function showToast(message) {
+            // 創建toast元素
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-coffee-dark text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-500 translate-y-20 opacity-0';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 顯示toast
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+            }, 10);
+            
+            // 自動隱藏toast
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                
+                // 完全移除元素
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 500);
+            }, 3000);
+        }
+
+        // 顯示訂單成功頁面並儲存訂單
+        function showOrderSuccess() {
+            const successOrderSummaryEl = document.getElementById('success-order-summary');
+            let summaryHTML = '';
+            let total = 0;
+            
+            // 獲取表單數據
+            const nameEl = document.getElementById('name');
+            const phoneEl = document.getElementById('phone');
+            const pickupTimeEl = document.getElementById('pickup-time');
+            const noteEl = document.getElementById('note');
+            
+            // 創建訂單對象
+            const orderId = generateOrderId();
+            const orderDate = new Date();
+            const order = {
+                id: orderId,
+                customerName: nameEl.value,
+                phone: phoneEl.value,
+                pickupTime: pickupTimeEl.value,
+                note: noteEl.value,
+                items: [...cart],
+                date: orderDate,
+                status: '待處理' // 初始狀態
+            };
+            
+            // 計算訂單總金額
+            order.items.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                summaryHTML += `
+                    <div class="flex justify-between mb-1">
+                        <span>${item.name} x ${item.quantity}</span>
+                        <span>NT$ ${itemTotal}</span>
+                    </div>
+                `;
+            });
+            
+            order.total = total;
+            
+            // 儲存訂單
+            allOrders.push(order);
+            // 將訂單保存到 localStorage
+            saveOrdersToStorage();
+            
+            // 更新訂單成功頁面的內容
+            summaryHTML += `
+                <div class="flex justify-between font-bold mt-3 pt-3 border-t">
+                    <span>總計：</span>
+                    <span>NT$ ${total}</span>
+                </div>
+                <div class="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+                    <p><span class="font-semibold">訂單編號：</span>${orderId}</p>
+                    <p><span class="font-semibold">取餐人：</span>${nameEl.value}</p>
+                    <p><span class="font-semibold">聯絡電話：</span>${phoneEl.value}</p>
+                    <p><span class="font-semibold">取餐時間：</span>${pickupTimeEl.value}</p>
+                    ${noteEl.value ? `<p><span class="font-semibold">備註：</span>${noteEl.value}</p>` : ''}
+                </div>
+            `;
+            
+            successOrderSummaryEl.innerHTML = summaryHTML;
+            
+            // 清空購物車
+            cart = [];
+            updateCartDisplay();
+            
+            // 切換到成功頁面
+            navigateTo('success');
+        }
+
+        // 生成訂單編號
+        function generateOrderId() {
+            const date = new Date();
+            const year = date.getFullYear().toString().slice(2);
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `ORD-${year}${month}${day}-${random}`;
+        }
+
+        // 驗證管理者密碼
+        function checkAdminPassword() {
+            const passwordEl = document.getElementById('admin-password');
+            const errorEl = document.getElementById('password-error');
+            
+            if (passwordEl.value === '12345') {
+                // 密碼正確，前往管理頁面
+                renderAdminOrders();
+                navigateTo('admin-orders');
+                errorEl.classList.add('hidden');
+            } else {
+                // 密碼錯誤，顯示錯誤訊息
+                errorEl.classList.remove('hidden');
+                passwordEl.value = '';
+                passwordEl.focus();
+            }
+        }
+
+        // 登出
+        function logout() {
+            navigateTo('home');
+        }
+
+        // 渲染管理員訂單頁面
+        function renderAdminOrders() {
+            const ordersTableBody = document.getElementById('orders-table-body');
+            const noOrdersRow = document.getElementById('no-orders-row');
+            
+            if (allOrders.length === 0) {
+                noOrdersRow.style.display = 'table-row';
+                return;
+            }
+            
+            noOrdersRow.style.display = 'none';
+            
+            let ordersHTML = '';
+            
+            // 依訂單日期排序，最新的在前面
+            const sortedOrders = [...allOrders].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedOrders.forEach(order => {
+                // 訂單內容的簡單摘要
+                const itemsSummary = order.items.map(item => `${item.name} x ${item.quantity}`).join(', ');
+                
+                ordersHTML += `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">
+                            ${order.id}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${order.customerName}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${order.phone}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                            <div class="max-w-xs overflow-hidden text-ellipsis">${itemsSummary}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${order.pickupTime}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            NT$ ${order.total}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}">
+                                ${order.status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <button onclick="updateOrderStatus('${order.id}')" class="text-coffee hover:text-coffee-dark transition-colors">
+                                完成訂單
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            ordersTableBody.innerHTML = ordersHTML;
+        }
+
+        // 根據訂單狀態獲取顏色類名
+        function getStatusColor(status) {
+            switch (status) {
+                case '待處理':
+                    return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+                case '準備中':
+                    return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                case '已完成':
+                    return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                case '已取消':
+                    return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                default:
+                    return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+            }
+        }
+
+        // 更新訂單狀態
+        function updateOrderStatus(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (order) {
+                order.status = '已完成';
+                saveOrdersToStorage(); // 更新訂單狀態後保存到 localStorage
+                renderAdminOrders();
+            }
+        }
+
+        // 事件監聽器
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化：載入訂單資料
+            initializeOrders();
+            
+            // 初始顯示首頁
+            navigateTo('home');
+            
+            // 設定結帳按鈕事件
+            checkoutBtn.addEventListener('click', () => {
+                navigateTo('order');
+            });
+            
+            // 確認訂單按鈕事件
+            confirmOrderBtn.addEventListener('click', () => {
+                const form = document.getElementById('checkout-form');
+                const isValid = form.checkValidity();
+                
+                if (isValid) {
+                    showOrderSuccess();
+                } else {
+                    form.reportValidity();
+                }
+            });
+            
+            // 管理員密碼輸入回車事件
+            document.getElementById('admin-password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkAdminPassword();
+                }
+            });
+        });
+    </script>
+
+
+</body></html>
